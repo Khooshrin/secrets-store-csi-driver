@@ -99,6 +99,7 @@ func (c *TokenClient) PodServiceAccountTokenAttrs(namespace, podName, serviceAcc
 	}
 
 	if len(csiDriver.Spec.TokenRequests) == 0 {
+		fmt.Printf("****************************************************\nTOKEN FILE LINE 102\nDriver TokenRequest length is 0.\nTherefore map returned is nil.\n*****************************************************\n\n\n")
 		return nil, nil
 	}
 
@@ -130,11 +131,12 @@ func (c *TokenClient) PodServiceAccountTokenAttrs(namespace, podName, serviceAcc
 	}
 
 	klog.V(4).InfoS("Fetched service account token attrs for CSIDriver", "driver", c.driverName, "podUID", podUID)
-	tokens, err := json.Marshal(outputs)
+	tokens, err := json.Marshal(outputs) // Returns Json Encoding.
 	if err != nil {
 		return nil, err
 	}
 
+	fmt.Printf("****************************************************\nTOKEN FILE LINE 139\nDriver Returning SA Token.\n*****************************************************\n\n\n")
 	return map[string]string{
 		"csi.storage.k8s.io/serviceAccount.tokens": string(tokens),
 	}, nil

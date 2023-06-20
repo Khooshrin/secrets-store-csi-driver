@@ -190,15 +190,22 @@ func (ns *nodeServer) NodePublishVolume(ctx context.Context, req *csi.NodePublis
 	// and send it to the provider in the parameters.
 	if parameters[CSIPodServiceAccountTokens] == "" {
 		// Inject pod service account token into volume attributes
+		fmt.Printf("****************************************************\nNODE SERVER FILE LINE 193\nDriver is making their own credentials.\n*****************************************************\n\n\n")
 		serviceAccountTokenAttrs, err := ns.tokenClient.PodServiceAccountTokenAttrs(podNamespace, podName, serviceAccountName, types.UID(podUID))
+		fmt.Printf("****************************************************\nNODE SERVER FILE LINE 195\n SA Token made by Driver is:\n%v\n\nError is:\n%v\n\n*****************************************************\n\n\n", serviceAccountTokenAttrs, err)
 		if err != nil {
 			klog.ErrorS(err, "failed to get service account token attrs", "pod", klog.ObjectRef{Namespace: podNamespace, Name: podName})
 			return nil, err
 		}
 		for k, v := range serviceAccountTokenAttrs {
+			fmt.Printf("****************************************************\nNODE SERVER FILE LINE 201\nAdding to Parameters:\nKey:  %v\nValue:   %v*****************************************************\n\n\n", k, v)
 			parameters[k] = v
 		}
+	} else {
+		fmt.Printf("****************************************************\nNODE SERVER FILE LINE 205\nDriver has received credentials from kubectl.\n*****************************************************\n\n\n")
 	}
+
+	fmt.Printf("****************************************************\nNODE SERVER FILE LINE 208\n Parameters variable being sent to Provider is:\n%v\n*****************************************************\n\n\n", parameters)
 
 	// ensure it's read-only
 	if !req.GetReadonly() {
